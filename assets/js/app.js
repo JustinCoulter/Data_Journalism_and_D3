@@ -1,7 +1,7 @@
-d3.csv("data.csv").then(function(healthData) {
-  // if (error) return console.warn(error);
+d3.csv("data.csv", function(error, healthData) {
+  if (error) return console.warn(error);
 
-  console.log(healthData);
+  // console.log(healthData);
 
   // log a list of state abbreviations
   var stateAbbr = healthData.map(data => data.abbr);
