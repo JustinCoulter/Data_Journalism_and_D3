@@ -26,7 +26,7 @@ function makeResponsive() {
 
   // Append SVG element
   var svg = d3
-    .select(".chart")
+    .select("#scatter")
     .append("svg")
     .attr("height", svgHeight)
     .attr("width", svgWidth);
@@ -57,11 +57,11 @@ function makeResponsive() {
     });
 
     var xLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(healthData, d => d.poverty)])
+    .domain([(d3.min(healthData, d => d.poverty)-(d3.min(healthData, d => d.poverty)*.1)), d3.max(healthData, d => d.poverty)*1.05])
     .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(healthData, d => d.healthcare)])
+    .domain([(d3.min(healthData, d => d.healthcare)-(d3.min(healthData, d => d.healthcare)*.1)), d3.max(healthData, d => d.healthcare)*1.05])
     .range([height, 0]);
 
     var xAxis = d3.axisBottom(xLinearScale);
