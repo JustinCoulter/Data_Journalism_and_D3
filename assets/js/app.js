@@ -1,151 +1,96 @@
-d3.csv("data.csv").then(function(healthData) {
-  // if (error) return console.warn(error);
+function makeResponsive() {
 
-  // console.log(healthData);
+  // if the SVG area isn't empty when the browser loads,
+  // remove it and replace it with a resized version of the chart
+  var svgArea = d3.select("#scatter").select("svg");
 
-  // log a list of state abbreviations
-  var stateAbbr = healthData.map(data => data.abbr);
-  console.log("abbr", stateAbbr);
+  // clear svg is not empty
+  if (!svgArea.empty()) {
+    svgArea.remove();
+  }
 
-  // parse data and cast to a number value
-  healthData.forEach(function(data) {
+  // SVG wrapper dimensions are determined by the current width and
+  // height of the browser window.
+  var svgWidth = 1000;
+  var svgHeight = 600;
 
-    data.poverty = +data.poverty;
-    data.healthcare = +data.healthcare;
+  var margin = {
+    top: 50,
+    bottom: 50,
+    right: 50,
+    left: 50
+  };
 
-    console.log(data.poverty);
-    console.log(data.healthcare);
+  var height = svgHeight - margin.top - margin.bottom;
+  var width = svgWidth - margin.left - margin.right;
+
+  // Append SVG element
+  var svg = d3
+    .select(".chart")
+    .append("svg")
+    .attr("height", svgHeight)
+    .attr("width", svgWidth);
+
+  // Append group element
+  var chartGroup = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+
+
+  d3.csv("data.csv").then(function(healthData) {
+    // if (error) return console.warn(error);
+
+    // console.log(healthData);
+
+    // log a list of state abbreviations
+    var stateAbbr = healthData.map(data => data.abbr);
+    console.log("abbr", stateAbbr);
+
+    // parse data and cast to a number value
+    healthData.forEach(function(data) {
+
+      data.poverty = +data.poverty;
+      data.healthcare = +data.healthcare;
+
+      console.log("poverty", data.poverty);
+      console.log("healthcare", data.healthcare);
+    });
+
+    var xLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(healthData, d => d.poverty)])
+    .range([0, width]);
+
+    var yLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(healthData, d => d.healthcare)])
+    .range([height, 0]);
+
+    var xAxis = d3.axisBottom(xLinearScale);
+    var yAxis = d3.axisLeft(yLinearScale);
+
+    chartGroup.append("g")
+    .attr("transform", `translate(0, ${height})`)
+    .call(xAxis);
+
+    chartGroup.append("g")
+    .call(yAxis);
+
+    var circlesGroup = chartGroup.selectAll("circle")
+        .data(healthData)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xLinearScale(d.poverty))
+        .attr("cy", d => yLinearScale(d.healthcare))
+        .attr("r", "10")
+        .attr("fill", "gold")
+        .attr("stroke-width", "1")
+        .attr("stroke", "black");
   });
-});
 
+}
 
-// function makeResponsive() {
+// When the browser loads, makeResponsive() is called.
+makeResponsive();
 
-//     // if the SVG area isn't empty when the browser loads,
-//     // remove it and replace it with a resized version of the chart
-//     // var svgArea = d3.select("body").select("div")
-//     //     .attr("#scatter")
-//     //     .append("svg");
-  
-//     // clear svg is not empty
-//     // if (!svgArea.empty()) {
-//     //   svgArea.remove();
-//     // }
-  
-//     // SVG wrapper dimensions are determined by the current width and
-//     // height of the browser window.
-//     var svgWidth = window.innerWidth;
-//     var svgHeight = window.innerHeight;
-  
-//     var margin = {
-//       top: 50,
-//       bottom: 50,
-//       right: 50,
-//       left: 50
-//     };
-  
-//     var height = svgHeight - margin.top - margin.bottom;
-//     var width = svgHeight - margin.left - margin.right;
-  
-//     // Append SVG element
-//     var svg = d3
-//       .select("#scatter")
-//       .append("svg")
-//       .attr("height", svgHeight)
-//       .attr("width", svgWidth);
-  
-//     // Append group element
-//     var chartGroup = svg.append("g")
-//       .attr("transform", `translate(${margin.left}, ${margin.top})`);
-  
-//     // Read CSV
-//     d3.csv("data.csv", function(err, healthData) {
-//       if (error) return console.warn(error);
+// When the browser window is resized, makeResponsive() is called.
+d3.select(window).on("resize", makeResponsive);
 
-//       console.log(healthData);
-//       // create date parser
-//     //   var dateParser = d3.timeParse("%d-%b");
-  
-//       // parse data
-//       healthData.forEach(function(data) {
-//         // data.date = dateParser(data.date);
-//         data.poverty = +data.poverty;
-//         data.healthcare = +data.healthcare;
-//         console.log(data.poverty);
-//         console.log(data.healthcare);
-//       });
-  
-//     //   // create scales
-//     //   var xTimeScale = d3.scaleTime()
-//     //     .domain(d3.extent(medalData, d => d.date))
-//     //     .range([0, width]);
-  
-//     //   var yLinearScale = d3.scaleLinear()
-//     //     .domain([0, d3.max(medalData, d => d.medals)])
-//     //     .range([height, 0]);
-  
-//     //   // create axes
-//     //   var xAxis = d3.axisBottom(xTimeScale);
-//     //   var yAxis = d3.axisLeft(yLinearScale).ticks(6);
-  
-//     //   // append axes
-//     //   chartGroup.append("g")
-//     //     .attr("transform", `translate(0, ${height})`)
-//     //     .call(xAxis);
-  
-//     //   chartGroup.append("g")
-//     //     .call(yAxis);
-  
-//     //   // line generator
-//     //   var line = d3.line()
-//     //     .x(d => xTimeScale(d.date))
-//     //     .y(d => yLinearScale(d.medals));
-  
-//     //   // append line
-//     //   chartGroup.append("path")
-//     //     .data([medalData])
-//     //     .attr("d", line)
-//     //     .attr("fill", "none")
-//     //     .attr("stroke", "red");
-  
-//     //   // append circles
-//     //   var circlesGroup = chartGroup.selectAll("circle")
-//     //     .data(medalData)
-//     //     .enter()
-//     //     .append("circle")
-//     //     .attr("cx", d => xTimeScale(d.date))
-//     //     .attr("cy", d => yLinearScale(d.medals))
-//     //     .attr("r", "10")
-//     //     .attr("fill", "gold")
-//     //     .attr("stroke-width", "1")
-//     //     .attr("stroke", "black");
-  
-//     //   // date formatter to display dates nicely
-//     //   var dateFormatter = d3.timeFormat("%d-%b");
-  
-//     //   // Step 1: Append tooltip div
-//     //   var toolTip = d3.select("body").append("div")
-//     //   .attr("class", "tooltip");
-  
-  
-//     //   // Step 2: Create "mouseover" event listener to display tooltip
-//     //   circlesGroup.on("mouseover", function(d, i) {
-//     //     toolTip.style("display", "block");
-//     //     toolTip.html(`Medals eaten: <strong>${d.medals}</strong>`)
-//     //       .style("left", d3.event.pageX + "px")
-//     //       .style("top", d3.event.pageY + "px");
-//     //   })
-  
-//     //   // Step 3: Create "mouseout" event listener to hide tooltip
-//     //   .on("mouseout", function() {
-//     //     toolTip.style("display", "none");
-//     //   });
-  
-//     });
-//   }
-  
-//   // When the browser loads, makeResponsive() is called.
-//   makeResponsive();
-  
-//   // When the browser window is resized, makeResponsive() is called.
-//   d3.select(window).on("resize", makeResponsive);// @TODO: YOUR CODE HERE!
