@@ -71,8 +71,31 @@ function makeResponsive() {
     .attr("transform", `translate(0, ${height})`)
     .call(xAxis);
 
+    // chartGroup.append("text")
+    // .attr("transform", `translate(${width / 2}, ${height + margin.top + 100})`)
+    // .attr("class", "axisText")
+    // .text("Hair Metal Band Hair Length (inches)");
+
     chartGroup.append("g")
     .call(yAxis);
+// text label for the x axis
+
+    svg.append("text")             
+      .attr("transform",
+            "translate(" + (width/2) + " ," + 
+                           (height + margin.top + 40) + ")")
+      .style("text-anchor", "middle")
+      .text("Poverty");
+
+      // text label for the y axis
+    chartGroup.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Healthcare");  
+
 
     var circlesGroup = chartGroup.selectAll("circle")
         .data(healthData)
@@ -83,7 +106,11 @@ function makeResponsive() {
         .attr("r", "10")
         .attr("fill", "gold")
         .attr("stroke-width", "1")
-        .attr("stroke", "black");
+        .attr("stroke", "black")
+        .append("text")
+        .attr("x", d => d.poverty)
+        .attr("y", d => d.healthcare)
+        .text("text",d => d.abbr);
   });
 
 }
