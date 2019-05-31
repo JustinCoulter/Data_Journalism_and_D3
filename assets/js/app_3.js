@@ -174,7 +174,7 @@ d3.csv("data.csv").then(function(healthData) {
 
   // append y axis-----------------------------------------------------------
   var yAxis = chartGroup.append("g")
-    .classed("y-axis", true)
+    // .classed("y-axis", true)
 
     .call(leftAxis);
 
@@ -231,6 +231,8 @@ d3.csv("data.csv").then(function(healthData) {
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 1.5))
     .attr("dy", "1em")
+    .attr("value", "healthcare") // value to grab for event listener
+    .classed("active", true)
     .classed("axis-text", true)
     .text("Lacks Healthcare (%)");
 
@@ -238,6 +240,9 @@ d3.csv("data.csv").then(function(healthData) {
     .attr("y", 0 - margin.left + 20)
     .attr("x", 0 - (height / 1.5))
     .attr("dy", "1em")
+    .attr("value", "obesity") // value to grab for event listener
+    .classed("inactive", true)
+    .classed("active", false)
     .classed("axis-text", true)
     .text("Obesity (%)");
 
@@ -285,22 +290,7 @@ d3.csv("data.csv").then(function(healthData) {
             .classed("active", true)
             .classed("inactive", false);
         }
-        // if (chosenYAxis === "healthcare") {
-        //   healthcareLabel
-        //     .classed("active", true)
-        //     .classed("inactive", false);
-        //   obesityLabel
-        //     .classed("active", false)
-        //     .classed("inactive", true);
-        // }
-        // else {
-        //   healthcareLabel
-        //     .classed("active", false)
-        //     .classed("inactive", true);
-        //   obesityLabel
-        //     .classed("active", true)
-        //     .classed("inactive", false);
-        // }
+       
       }
     });
 
