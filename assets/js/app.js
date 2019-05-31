@@ -11,8 +11,11 @@ function makeResponsive() {
 
   // SVG wrapper dimensions are determined by the current width and
   // height of the browser window.
-  var svgWidth = 1000;
-  var svgHeight = 600;
+  var svgHeight = window.innerHeight*.6;
+  var svgWidth = window.innerWidth*.6;
+
+  // var svgWidth = 1000;
+  // var svgHeight = 600;
 
   var margin = {
     top: 50,
@@ -24,23 +27,22 @@ function makeResponsive() {
   var height = svgHeight - margin.top - margin.bottom;
   var width = svgWidth - margin.left - margin.right;
 
-  // Append SVG element
-  var svg = d3
-    .select("#scatter")
-    .append("svg")
-    .attr("height", svgHeight)
-    .attr("width", svgWidth);
-
-  // Append group element
-  var chartGroup = svg.append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-
-
+//  read the data from the csv
   d3.csv("data.csv").then(function(healthData) {
-    // if (error) return console.warn(error);
+  
 
     // console.log(healthData);
+
+    // Append SVG element
+    var svg = d3
+      .select("#scatter")
+      .append("svg")
+      .attr("height", svgHeight)
+      .attr("width", svgWidth);
+
+    // Append group element
+    var chartGroup = svg.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // log a list of state abbreviations
     var stateAbbr = healthData.map(data => data.abbr);
@@ -55,6 +57,8 @@ function makeResponsive() {
       console.log("poverty", data.poverty);
       console.log("healthcare", data.healthcare);
     });
+    console.log("pmax", d3.max(healthData, d => d.poverty));
+    console.log("hmax", d3.max(healthData, d => d.healthcare));
 
     var xLinearScale = d3.scaleLinear()
     .domain([(d3.min(healthData, d => d.poverty)-(d3.min(healthData, d => d.poverty)*.1)), d3.max(healthData, d => d.poverty)*1.05])
@@ -66,19 +70,16 @@ function makeResponsive() {
 
     var xAxis = d3.axisBottom(xLinearScale);
     var yAxis = d3.axisLeft(yLinearScale);
+   
 
     chartGroup.append("g")
     .attr("transform", `translate(0, ${height})`)
     .call(xAxis);
 
-    // chartGroup.append("text")
-    // .attr("transform", `translate(${width / 2}, ${height + margin.top + 100})`)
-    // .attr("class", "axisText")
-    // .text("Hair Metal Band Hair Length (inches)");
-
     chartGroup.append("g")
     .call(yAxis);
-// text label for the x axis
+
+    // text label for the x axis
 
     svg.append("text")             
       .attr("transform",
@@ -87,7 +88,7 @@ function makeResponsive() {
       .style("text-anchor", "middle")
       .text("Poverty");
 
-      // text label for the y axis
+    // text label for the y axis
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 0 - margin.left)
@@ -97,7 +98,7 @@ function makeResponsive() {
       .text("Healthcare");  
 
 
-    var circlesGroup = chartGroup.selectAll("circle")
+    var circlesGroup = chartGroup.selectAll("circles")
         .data(healthData)
         .enter()
         .append("circle")
@@ -106,11 +107,15 @@ function makeResponsive() {
         .attr("r", "10")
         .attr("fill", "gold")
         .attr("stroke-width", "1")
-        .attr("stroke", "black")
+        .attr("stroke", "black");
+
+    chartGroup.selectAll("circle")
+        .data(healthData)
+        .enter()
         .append("text")
-        .attr("x", d => d.poverty)
-        .attr("y", d => d.healthcare)
-        .text("text",d => d.abbr);
+        .attr("x", d => xLinearScale(d.poverty))
+        .attr("y", d => yLinearScale(d.healthcare))
+        .text("text", d => (d.abbr));
   });
 
 }
