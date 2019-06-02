@@ -94,7 +94,7 @@ function renderText(textGroup, newXScale, newYScale, chosenXAxis, chosenYAxis) {
     textGroup.transition()
       .duration(1000)
       .attr("x", d => newXScale(d[chosenXAxis]))
-      .attr("y", d => newYScale(d[chosenYAxis])+ 4.5);
+      .attr("y", d => newYScale(d[chosenYAxis]));
   
     return textGroup;
   }
@@ -136,7 +136,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     // onmouseout event
     .on("mouseout", function(data) {
       toolTip.hide(data,this)
-      d3.select(this).attr("r",10).attr("stroke","grey");
+      d3.select(this).attr("r",10).attr("stroke","black");
     });
 
   return circlesGroup;
@@ -186,10 +186,10 @@ d3.csv("data.csv").then(function(healthData) {
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 10)
-    .attr("fill", "lightblue")
+    .attr("fill", "gold")
     .attr("opacity", "1")
-    .attr("stroke-width", "1.5")
-    .attr("stroke", "grey");
+    .attr("stroke-width", "1")
+    .attr("stroke", "black");
 
 // add text State abbr to circles 
   var textGroup = chartGroup2.selectAll("text")
