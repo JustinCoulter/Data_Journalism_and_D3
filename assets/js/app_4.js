@@ -110,6 +110,10 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     var label = "Age";
     var label2 = "Lacks Health Care (%)";
   }
+  else if (chosenXAxis === "smokes" && chosenYAxis === "healthcare"){
+    var label = "Smokes (%)";
+    var label2 = "Lacks Health Care (%)";
+  }
   else if (chosenXAxis === "age" && chosenYAxis === "obesity"){
     var label = "Age";
     var label2 = "Obesity (%)";
@@ -118,7 +122,22 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     var label = "In Poverty (%)"
     var label2 = "Obesity (%)";
   }
-
+  else if (chosenXAxis === "smokes" && chosenYAxis === "obesity") {
+    var label = "Smokes (%)"
+    var label2 = "Obesity (%)";
+  }
+  else if (chosenXAxis === "smokes" && chosenYAxis === "income") {
+    var label = "Smokes (%)"
+    var label2 = "Average Yearly Income ($)";
+  }
+  else if (chosenXAxis === "age" && chosenYAxis === "income") {
+    var label = "Age"
+    var label2 = "Average Yearly Income ($)";
+  }
+  else if (chosenXAxis === "poverty" && chosenYAxis === "income") {
+    var label = "In Poverty (%)"
+    var label2 = "Average Yearly Income ($)";
+  }
 
   var toolTip = d3.tip()
     .attr("class", "d3-tip")
@@ -152,6 +171,8 @@ d3.csv("data.csv").then(function(healthData) {
     data.healthcare = +data.healthcare;
     data.age = +data.age;
     data.obesity = +data.obesity;
+    data.income = +data.income;
+    data.smokes = +data.smokes;
   });
 
   // xLinearScale function above csv import
@@ -223,13 +244,20 @@ d3.csv("data.csv").then(function(healthData) {
     .classed("inactive", true)
     .text("Age");
 
+  var smokesLabel = labelsGroup.append("text")
+    .attr("x", 0)
+    .attr("y", 60)
+    .attr("value", "smokes") // value to grab for event listener
+    .classed("inactive", true)
+    .text("Smokes (%)");
+
   // append y axis
   var labelsGroupY = chartGroup.append("g")
     .attr("transform", "rotate(-90)");
 
   var healthcareLabel = labelsGroupY.append("text")  
     .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 1.5))
+    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("value", "healthcare") // value to grab for event listener
     .classed("active", true)
@@ -238,13 +266,21 @@ d3.csv("data.csv").then(function(healthData) {
 
   var obesityLabel = labelsGroupY.append("text")  
     .attr("y", 0 - margin.left + 20)
-    .attr("x", 0 - (height / 1.5))
+    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("value", "obesity") // value to grab for event listener
     .classed("inactive", true)
-    .classed("active", false)
     .classed("axis-text", true)
     .text("Obesity (%)");
+
+  var incomeLabel = labelsGroupY.append("text")  
+    .attr("y", 0 - margin.left + 40)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .attr("value", "income") // value to grab for event listener
+    .classed("inactive", true)
+    .classed("axis-text", true)
+    .text("Income ($)");
 
 
 
@@ -281,14 +317,31 @@ d3.csv("data.csv").then(function(healthData) {
           povertyLabel
             .classed("active", false)
             .classed("inactive", true);
+          smokesLabel
+            .classed("active", false)
+            .classed("inactive", true);
         }
-        else {
+        else if (chosenXAxis === "poverty"){
           ageLabel
             .classed("active", false)
             .classed("inactive", true);
           povertyLabel
             .classed("active", true)
             .classed("inactive", false);
+          smokesLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        }
+        else if (chosenXAxis === "smokes"){
+            ageLabel
+              .classed("active", false)
+              .classed("inactive", true);
+            povertyLabel
+              .classed("active", false)
+              .classed("inactive", true);
+            smokesLabel
+              .classed("active", true)
+              .classed("inactive", false);
         }
        
       }
@@ -323,6 +376,9 @@ d3.csv("data.csv").then(function(healthData) {
           obesityLabel
             .classed("active", false)
             .classed("inactive", true);
+          incomeLabel
+            .classed("active", false)
+            .classed("inactive", true);
         }
         else if (chosenYAxis === "obesity") {
           healthcareLabel
@@ -331,7 +387,21 @@ d3.csv("data.csv").then(function(healthData) {
           obesityLabel
             .classed("active", true)
             .classed("inactive", false);
+          incomeLabel
+            .classed("active", false)
+            .classed("inactive", true);
         }
+        else if (chosenYAxis === "income"){
+          healthcareLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          obesityLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          incomeLabel
+            .classed("active", true)
+            .classed("inactive", false);
+        }      
       }
     });
 });
